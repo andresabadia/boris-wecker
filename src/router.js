@@ -7,9 +7,23 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
+      path: '*',
+      redirect: '/'
+    },
+    {
       path: '/',
       name: 'home',
       component: Home
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: () => import('./components/Settings.vue')
+    },
+    {
+      path: '/player',
+      name: 'player',
+      component: () => import('./components/Player.vue')
     },
     {
       path: '/about',

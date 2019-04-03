@@ -1,0 +1,83 @@
+{"alarms":[
+        {
+            "id": 1,
+            "active": true,
+            "name":"Aufstehen",
+            "repetition": {
+                "state": true,
+                "time": {
+                    "hours": 8,
+                    "minutes": 0
+                },
+                "weekdays": [1,2,3,4,5],
+                "date": ""
+            },
+            "vorgangs":[
+                {
+                    "name": "Schlummern",
+                    "duration": 8,
+                    "songs": [],
+                    "image": "",
+                    "active": false
+                },
+                {
+                    "name": "Aufstehen",
+                    "duration": 3,
+                    "songs":[ 
+                        "song_02.mp3",
+                        "song_03.mp3",
+                        "song_04.mp3",
+                        "song_05.mp3"
+                    ],
+                    "image": "",
+                    "active": false
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "active": true,
+            "name":"Ins Bett Gehen",
+            "repetition": {
+                "state": true,
+                "time": {
+                    "hours": 16,
+                    "minutes": 51
+                },
+                "weekdays": [1,2,3,4,5],
+                "date": ""
+            },
+            "vorgangs":[
+                {
+                    "name": "Zähne Putzen",
+                    "duration": 3,
+                    "songs": [],
+                    "image": "",
+                    "active": false
+                },
+                {
+                    "name": "Gute Nacht",
+                    "duration": 5,
+                    "songs":[ 
+                        "song_02.mp3",
+                        "song_03.mp3",
+                        "song_04.mp3",
+                        "song_05.mp3"
+                    ],
+                    "image": "",
+                    "active": false
+                },
+                {
+                    "name": "Uno nuevo",
+                    "duration": 3,
+                    "songs":[ 
+                        "song_02.mp3",
+                        "song_03.mp3"
+                    ],
+                    "image": "",
+                    "active": false
+                }
+            ]
+        }
+    ]
+}
