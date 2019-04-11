@@ -211,7 +211,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .boris-player-modal{
     color:#ff9900;
     position: fixed;

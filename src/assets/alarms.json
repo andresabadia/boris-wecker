@@ -9,7 +9,7 @@
                     "hours": 8,
                     "minutes": 0
                 },
-                "weekdays": [1,2,3,4,5],
+                "weekdays": [1,3,4,5],
                 "date": ""
             },
             "vorgangs":[
@@ -44,7 +44,7 @@
                     "hours": 16,
                     "minutes": 51
                 },
-                "weekdays": [1,2,3,4,5],
+                "weekdays": [2,3,4,5],
                 "date": ""
             },
             "vorgangs":[

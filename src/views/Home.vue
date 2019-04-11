@@ -3,11 +3,11 @@
     <div class="row justify-content-md-center">
       <div class="col-md-6 col-lg-4">
         <ul class="list-group">
-          <li class="list-group-item" v-for="(alarm, index) in user.data.alarms"> {{alarm.name}} - {{alarm.repetition.time.hours | time}}:{{alarm.repetition.time.minutes | time}} Uhr<i class="fas fa-cog" @click="settings(alarm.id, index)"></i><i class="fas fa-play" @click="player(alarm.id, index)"></i> </li>
+          <li class="list-group-item" v-for="(alarm, index) in $store.getters.user.data.alarms"> {{alarm.name}} - {{alarm.repetition.time.hours | time}}:{{alarm.repetition.time.minutes | time}} Uhr<i class="fas fa-cog" @click="settings(alarm.id, index)"></i><i class="fas fa-play" @click="player(alarm.id, index)"></i> </li>
         </ul>
         <br>
-        <div>Nächster Wecker in: {{nextAlarmVar[0].alarmDate - today | DateToTime}} - {{user.data.alarms[nextAlarmVar[0].index].name}}</div>
-        <div>Nächster Wecker in: {{nextAlarmVar[0].alarmDate - today | DateToTime}} - {{$store.state.user.data.alarms[nextAlarmVar[0].index].name}}</div>
+        <!-- <div>Nächster Wecker in: {{nextAlarmVar[0].alarmDate - today | DateToTime}} - {{user.data.alarms[nextAlarmVar[0].index].name}}</div> -->
+        <div>Nächster Wecker in: {{nextAlarmVar[0].alarmDate - today | DateToTime}} - {{$store.getters.user.data.alarms[nextAlarmVar[0].index].name}}</div>
       </div>
     </div>    
   </div>
@@ -21,12 +21,12 @@ export default {
   name: 'home',
   data(){
     return{
-      user: {
-        id: null,
-        name: null,
-        data: null,
-        guest: null
-      },
+      // user: {
+      //   id: null,
+      //   name: null,
+      //   data: null,
+      //   guest: null
+      // },
       nextAlarmVar: [],
       today:null,
       countDownTimeout: null
@@ -34,15 +34,16 @@ export default {
   },
   methods:{
     settings(alarmId, index){
-      localStorage.setItem('bw-alarm', JSON.stringify(this.user.data.alarms[index]))
+      localStorage.setItem('bw-alarm', JSON.stringify(this.$store.getters.user.data.alarms[index]))
+      // localStorage.setItem('bw-alarm', JSON.stringify(this.user.data.alarms[index]))
       this.$router.push('settings')
     },
     player(alarmId, index){
-      localStorage.setItem('bw-alarm', JSON.stringify(this.user.data.alarms[index]))
+      localStorage.setItem('bw-alarm', JSON.stringify(this.$store.getters.user.data.alarms[index]))
       this.$router.push('player')
     },
     nextAlarm(){
-      let alarms = this.user.data.alarms
+      let alarms = this.$store.getters.user.data.alarms
       for(let i = 0; i < alarms.length; i++){
         if(alarms[i].active){
           let alarmDate
@@ -55,9 +56,13 @@ export default {
             alarmDate.setSeconds(0)
             alarmDate.setMilliseconds(0)
             if(rep.weekdays.length>0){              
-              for (let j = 0; now > alarmDate; j++){
+              if (now > alarmDate){ 
                 alarmDate.setDate(alarmDate.getDate()+1)
               }
+              while(!rep.weekdays.includes(alarmDate.getDay())){
+                alarmDate.setDate(alarmDate.getDate()+1)
+              }
+
             }
           }else{
             alarmDate = new Date(rep.date.getFullYear(), rep.date.getMonth(), rep.date.getDate(), rep.time.hours, rep.time.minutes)
@@ -77,37 +82,37 @@ export default {
     startCountDown(){
       if(this.nextAlarmVar != []){
         console.log(this.nextAlarmVar[0].alarmDate - this.today)
-        // setTimeout(this.playerStartenJetzt, this.nextAlarmVar[0].alarmDate - this.today)
         this.countDownTimeout = setTimeout(()=>{this.player(this.nextAlarmVar[0].alarmId,this.nextAlarmVar[0].index)},this.nextAlarmVar[0].alarmDate - this.today)
       }      
-    },
-    playerStartenJetzt(){
-      alert('ALARM!')
     },
     startTime(){
       this.today = new Date()
       setTimeout(this.startTime, 500)         
     },
     updateLocal(){
-      localStorage.setItem('bw-user', JSON.stringify(this.user))
-      localStorage.setItem('bw-user', JSON.stringify(this.$store.state.user))
+      localStorage.setItem('bw-user', JSON.stringify(this.$store.getters.user))
+      // localStorage.setItem('bw-user', JSON.stringify(this.user))
     },
     setDefaultUser(){
-      this.$store.state.user.id = this.makeUniqueID
-      this.$store.state.user.name = 'guest'
-      this.$store.state.user.data = defaultJSON
-      this.$store.state.user.guest = true
-      console.log(this.$store.state.user)
+      // this.$store.state.user.id = this.makeUniqueID
+      // this.$store.state.user.name = 'guest'
+      // this.$store.state.user.data = defaultJSON
+      // this.$store.state.user.guest = true
 
-      this.user.id = this.makeUniqueID
-      this.user.name = 'guest'
-      this.user.data = defaultJSON
-      this.user.guest = true
+      this.$store.commit('userId', this.makeUniqueID)
+      this.$store.commit('userName', 'guest')
+      this.$store.commit('userData', defaultJSON)
+      this.$store.commit('userGuest', true)
+      console.log(this.$store.getters.user)
+
+      // this.user.id = this.makeUniqueID
+      // this.user.name = 'guest'
+      // this.user.data = defaultJSON
+      // this.user.guest = true
     },
     checkUser(){
       if (localStorage.getItem('bw-user')!=null){
-        this.$store.state.user = JSON.parse(localStorage.getItem('bw-user'))
-  	  	this.user = JSON.parse(localStorage.getItem('bw-user'))
+        this.$store.commit('user', JSON.parse(localStorage.getItem('bw-user')))
       } else {
         this.setDefaultUser()
         this.updateLocal()

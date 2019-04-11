@@ -1,0 +1,26 @@
+{"songs":[ 
+    {
+        "path": "song_02.mp3",
+        "name": "Lied 2",
+        "duration": 5,
+        "tags": ""
+    },
+    {
+        "path": "song_03.mp3",
+        "name": "Lied 3",
+        "duration": 133,
+        "tags": ""
+    },
+    {
+        "path": "song_04.mp3",
+        "name": "Lied 4",
+        "duration": 28,
+        "tags": ""
+    },
+    {
+        "path": "song_05.mp3",
+        "name": "Lied 5",
+        "duration": 185,
+        "tags": ""
+    }
+]}

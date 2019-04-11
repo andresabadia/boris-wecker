@@ -1,0 +1,9 @@
+{"vorgang":
+    {
+        "name": "neue Vorgang",
+        "duration": 1,
+        "songs": [],
+        "image": "",
+        "active": false
+    }
+}
