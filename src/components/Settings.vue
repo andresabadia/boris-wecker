@@ -1,6 +1,6 @@
 <template>
   <div class="settings">
-    <h1> Settings </h1>
+    <h1> Settings</h1>
     <br>
     <div>Active: {{alarm.active}}</div>
     <div class="active-status">
@@ -44,7 +44,7 @@
       </div>
     </div>
 
-    <div v-for="(vorgang, index) in alarm.vorgangs" :key="vorgang.name">
+    <div v-for="(vorgang) in alarm.vorgangs" :key="vorgang.name">
       <div>Vorgang: {{vorgang}}</div>
     </div>
     <div class="vorgang-settings">
@@ -62,8 +62,14 @@
       <button @click="nextVorgang(alarm.vorgangs, +1)"><i class="fas fa-caret-right"></i></button>
       <button @click="changePosition(alarm.vorgangs, vorgangIndex, vorgangIndex+1, true)"><i class="fas fa-exchange-alt"></i></button>
       <br>
+      <div class="vorgang-image-preview">
+        <img :src="'./images/'+alarm.vorgangs[vorgangIndex].image">
+      </div>
       <button @click="selectionModal=true; selectionImage=true"><i class="fas fa-image"></i></button>
       <button @click="selectionModal=true; selectionSongs=true"><i class="fas fa-music"></i></button>
+    </div>
+    <div>
+      <button @click="saveLocal"><i class="fas fa-save"></i></button>
     </div>
 
     <div class="selection-modal" v-if="selectionModal">
@@ -71,10 +77,15 @@
         <div class="selection-window-close" @click="selectionModal=false; selectionSongs=false; selectionImage=false">
           <span >X</span>
         </div>
-        <div v-if="selectionImage">Image</div>
+        <div class="image-selection" v-if="selectionImage">
+          <div v-for="(image) in images" class="image-preview" :key="image.path">
+            <img :src="'./images/'+image.path" @click="alarm.vorgangs[vorgangIndex].image=image.path; selectionModal=false; selectionSongs=false; selectionImage=false">
+          </div>
+        </div>
+
         <div class="songs-selection" v-if="selectionSongs">
           <div class="songs-available">
-            <div v-for="(song, index) in songs">
+            <div v-for="(song) in songs" :key="song.path">
               <button @click="alarm.vorgangs[vorgangIndex].songs.push(song.path)"><i class="fas fa-angle-double-right"></i></button>
               <span>{{song.name}}</span>
             </div>
@@ -89,40 +100,14 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <div><br>--------<br><br></div>
-    
-    <div v-for="(vorgang, index) in alarm.vorgangs">
-      <div>Vorgang: {{vorgang.name}}</div>    
-      <div class="row justify-content-md-center">
-        <div class="col-2">
-          <input type="text" class="form-control" v-model="vorgang.name">
-        </div>
-      </div>
-      <div>Vorgangdauer: {{vorgang.duration}} Min.</div>
-      <div class="row justify-content-md-center">
-        <div class="col-1">
-          <input type="number" class="form-control" v-model="vorgang.duration">
-        </div>
-        <div class="col-1">
-          <span>Min.</span>
-        </div>
-      </div>
-      <div v-for="song in vorgang.songs">
-        {{song}}      
-      </div>
-        {{vorgang.image}} 
-      <div><br>--------<br><br></div>
-    </div>
-    
+    </div>    
   </div>
 </template>
 
 <script>
 import newVorgang from '../assets/newVorgang.json'
 import songsJSON from '../assets/songs.json'
-import imagesJSON from '../assets/songs.json'
+import imagesJSON from '../assets/images.json'
 export default {
   name: 'settings',
   data(){
@@ -236,11 +221,32 @@ export default {
           this.nextVorgang(array, to-from)
         }
       }
+    },
+    saveLocal(){
+      localStorage.setItem('bw-alarm', JSON.stringify(this.alarm))
+      // this.$store.commit('userData', this.alarm)
+      let user = JSON.parse(localStorage.getItem('bw-user'))
+
+      // console.log(this.alarm)
+      
+      for(let i=0; i<user.data.alarms.length; i++){
+        if(user.data.alarms[i].id == this.alarm.id){
+          // console.log(user.data.alarms[i])
+          user.data.alarms[i] = this.alarm
+          // console.log(user.data.alarms[i])
+          localStorage.setItem('bw-user', JSON.stringify(user))
+          return
+        }
+      }
     }
   },
   created(){
     this.alarm = JSON.parse(localStorage.getItem('bw-alarm'))
     this.setWeekdays()
+  },
+  beforeRouteLeave (to, from, next) {
+    this.saveLocal()
+    next()
   },
   beforeRouteEnter(to, from, next){
     //check if alarmId exist
@@ -293,6 +299,14 @@ export default {
   .radio-space{
     margin: 10px;
   }
+  .vorgang-image-preview{
+    height: 250px;
+    width: 250px;
+  }
+  .vorgang-image-preview img{
+    max-width: 250px;
+    max-height: 250px;
+  }
   .selection-modal{
     color:#ff9900;
     position: fixed;
@@ -327,8 +341,22 @@ export default {
     display: flex;
     width: 100%;
     padding: 20px;
+    overflow: auto;
   }
   .songs-available, .songs-selected{
     width: 50%;
+  }
+  .image-selection{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    overflow: auto;
+  }
+  .image-preview{
+    padding: 10px
+  }
+  .image-preview img{
+    max-height: 300px;
+    max-width: 300px;
   }
 </style>

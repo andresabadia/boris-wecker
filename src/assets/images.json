@@ -1,22 +1,22 @@
 {"images":[ 
     {
-        "path": "song_02.mp3",
-        "name": "Lied 2",
+        "path": "img_01.gif",
+        "name": "Image 1",
         "tags": ""
     },
     {
-        "path": "song_03.mp3",
-        "name": "Lied 3",
+        "path": "img_02.gif",
+        "name": "Image 2",
         "tags": ""
     },
     {
-        "path": "song_04.mp3",
-        "name": "Lied 4",
+        "path": "img_03.gif",
+        "name": "Image 3",
         "tags": ""
     },
     {
-        "path": "song_05.mp3",
-        "name": "Lied 5",
+        "path": "img_04.gif",
+        "name": "Image 4",
         "tags": ""
     }
 ]}

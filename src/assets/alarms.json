@@ -17,7 +17,7 @@
                     "name": "Schlummern",
                     "duration": 8,
                     "songs": [],
-                    "image": "",
+                    "image": "img_01.gif",
                     "active": false
                 },
                 {
@@ -29,7 +29,7 @@
                         "song_04.mp3",
                         "song_05.mp3"
                     ],
-                    "image": "",
+                    "image": "img_02.gif",
                     "active": false
                 }
             ]
@@ -52,7 +52,7 @@
                     "name": "Zähne Putzen",
                     "duration": 3,
                     "songs": [],
-                    "image": "",
+                    "image": "img_01.gif",
                     "active": false
                 },
                 {
@@ -64,7 +64,7 @@
                         "song_04.mp3",
                         "song_05.mp3"
                     ],
-                    "image": "",
+                    "image": "img_03.gif",
                     "active": false
                 },
                 {
@@ -74,7 +74,7 @@
                         "song_02.mp3",
                         "song_03.mp3"
                     ],
-                    "image": "",
+                    "image": "img_04.gif",
                     "active": false
                 }
             ]

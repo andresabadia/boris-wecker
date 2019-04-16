@@ -2,7 +2,7 @@
   <div>
     <h1 class="display-1">Boris Player</h1>
     <h1> {{vorgang}} ({{duration}} min.) - {{countdown}} </h1>
-    <audio id="boris-player" src="../audio/song_default.mp3" controls @ended="playNext"></audio>
+    <audio id="boris-player" src="./audio/song_default.mp3" controls @ended="playNext"></audio>
     <div class="row"> {{ songs }}  </div>  
     <button class="btn btn-primary" @click="restart">Restart</button>
     <button class="btn btn-primary" @click="nextVorgang">nächste Vorgang</button>
@@ -20,7 +20,9 @@
                     <p>Du hast noch:</p>
                     <span style="font-size: 150px"> {{countdown}} </span>                    
                 </div>
-                <div class="vorgang-bild"></div>
+                <div class="vorgang-bild">
+                    <img :src="'./images/'+vorgangs[currentVorgang].image">
+                </div>
             </div>
              <div class="vorgang-parent-parent">
                 <div class="wecker-name">Weckername / Zielzeit</div>
@@ -45,7 +47,8 @@ export default {
                     name: 'schlummern',
                     duration: 10,
                     songs:[],
-                    active:false
+                    active:false,
+                    image: "img_01.gif"
                 },
                 {
                     name: 'aufstehen',
@@ -56,7 +59,8 @@ export default {
                         'song_04.mp3',
                         'song_05.mp3',
                     ],
-                    active:false
+                    active:false,
+                    image: "img_05.gif"
                 },
                 {
                     name: 'duschen',
@@ -65,7 +69,8 @@ export default {
                         'song_02.mp3',
                         'song_03.mp3',
                     ],
-                    active:false
+                    active:false,
+                    image: "img_04.gif"
                 },
                 {
                     name: 'frühstücken',
@@ -78,20 +83,22 @@ export default {
                         'song_03.mp3',
                         'song_04.mp3',
                     ],
-                    active:false
+                    active:false,
+                    image: "img_03.gif"
                 },
                 {
                     name: 'zähne putzen',
                     duration: 15,
                     songs:[],
-                    active:false
+                    active:false,
+                    image: "img_02.gif"
                 }
             ],
             currentVorgang: 0,
             currentSong: 0,
             songDefault: 'song_default.mp3',
             vorgangTimeout: null,
-            vorgangInverval: null,
+            vorgangInterval: null,
             countdown:0,
             weckerTimeout: null
         }
@@ -121,7 +128,9 @@ export default {
         },
         playerAdmin(){
             this.vorgangs[this.currentVorgang].active = true
-            this.weckerTimer()
+            if (this.currentVorgang == 0){
+                this.weckerTimer()
+            }
             this.vorgangTimer(this.durationMilli)
             if(this.songs.length>0){
                 this.player(this.songs[0])
@@ -135,7 +144,7 @@ export default {
             }
             this.test=source
             let borisPlayer = document.getElementById('boris-player')
-            borisPlayer.src = '../audio/' + source
+            borisPlayer.src = './audio/' + source
             borisPlayer.volume = 1
             borisPlayer.load()
             borisPlayer.play()
@@ -151,36 +160,49 @@ export default {
         nextVorgang(){
             this.vorgangs[this.currentVorgang].active = false 
             this.currentVorgang++
+            if (this.currentVorgang >= this.vorgangs.length){
+                this.currentVorgang--
+                this.close()
+            }
             this.currentSong=0
             this.playerAdmin()
         },
         vorgangTimer(duration){
-            clearInterval(this.vorgangInverval)
+            clearInterval(this.vorgangInterval)
 
             this.vorgangTimeout = setTimeout(()=>{
                 this.nextVorgang()
             }, duration)
+            console.log("vorgangTimer: set vorgangTimeout " + duration)
 
             let countdown = duration
-            this.vorgangInverval = setInterval(()=>{
-                countdown -= 1000           
+            let intervalDuration = 250
+            this.vorgangInterval = setInterval(()=>{
+                countdown -= intervalDuration           
                 this.countdown = this.minAndSec(countdown)
-            }, 1000)
+            }, intervalDuration)
+            console.log("vorgangTimer: set vorgangInterval")
+
         },
         weckerTimer(){
             this.weckerTimeout = setTimeout(()=>{
-                this.clearBeforeLeave()
+                // this.clearBeforeLeave()
                 this.close()
             }, this.durationSum)
+            console.log("weckerTimer: set weckerTimeout " + this.durationSum)
         },
-        close(){            
+        close(){   
+            // this.clearBeforeLeave()         
             this.$router.go('-1')
         },
         clearBeforeLeave(){
             this.vorgangs[this.currentVorgang].active = false
             clearTimeout(this.weckerTimeout)
+            console.log("clearBeforeLeave: weckerTimeout cleared")
             clearTimeout(this.vorgangTimeout)
-            clearInterval(this.vorgangInverval)
+            console.log("clearBeforeLeave: vorgangTimeout cleared")
+            clearInterval(this.vorgangInterval)
+            console.log("clearBeforeLeave: vorgangInterval cleared")
             this.currentVorgang=0
             this.currentSong=0
             let borisPlayer = document.getElementById('boris-player')
@@ -254,6 +276,10 @@ export default {
     width: 806px;
     height: 453px;
     background-color: white;
+}
+.vorgang-bild img{
+    max-width: 806px;
+    max-height: 453px;
 }
 .vorgang-parent-parent{
     position: absolute;
