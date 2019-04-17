@@ -2,17 +2,17 @@
   <div class="settings">
     <h1> Settings</h1>
     <br>
-    <div>Active: {{alarm.active}}</div>
+    <!-- <div>Active: {{alarm.active}}</div> -->
     <div class="active-status">
       <input type="checkbox" v-model="alarm.active">
       <span @click="alarm.active=!alarm.active">{{alarm.name}}</span>
     </div>
 
-    <div>Name: {{alarm.name}}</div>
+    <!-- <div>Name: {{alarm.name}}</div>
     <div>Repetition State: {{alarm.repetition.state}}</div>
     <div>Repetition Time: {{alarm.repetition.time.hours}}:{{alarm.repetition.time.minutes}}</div>
     <div>Repetition Days: {{alarm.repetition.weekdays}}</div>
-    <div>No Repetition Date: {{alarm.repetition.date}}</div>
+    <div>No Repetition Date: {{alarm.repetition.date}}</div> -->
     <div class="wecker-plan">
       <h6>Weckerplan</h6>
       <span>Weckername</span>
@@ -44,9 +44,9 @@
       </div>
     </div>
 
-    <div v-for="(vorgang) in alarm.vorgangs" :key="vorgang.name">
+    <!-- <div v-for="(vorgang) in alarm.vorgangs" :key="vorgang.name">
       <div>Vorgang: {{vorgang}}</div>
-    </div>
+    </div> -->
     <div class="vorgang-settings">
       <h6>Vorgang</h6>
       <span>Vorgangsname</span>
@@ -59,14 +59,23 @@
       <button @click="changePosition(alarm.vorgangs, vorgangIndex, vorgangIndex-1, true)"><i class="fas fa-exchange-alt"></i></button>
       <button @click="nextVorgang(alarm.vorgangs, -1)"><i class="fas fa-caret-left"></i></button>
       <button @click="addVorgang()"><i class="fas fa-plus"></i></button>
+      <button @click="removeVorgang()"><i class="fas fa-minus"></i></button>
       <button @click="nextVorgang(alarm.vorgangs, +1)"><i class="fas fa-caret-right"></i></button>
       <button @click="changePosition(alarm.vorgangs, vorgangIndex, vorgangIndex+1, true)"><i class="fas fa-exchange-alt"></i></button>
       <br>
       <div class="vorgang-image-preview">
-        <img :src="'./images/'+alarm.vorgangs[vorgangIndex].image">
+        <img :src="'./images/'+alarm.vorgangs[vorgangIndex].image" @click="selectionModal=true; selectionImage=true">
       </div>
       <button @click="selectionModal=true; selectionImage=true"><i class="fas fa-image"></i></button>
       <button @click="selectionModal=true; selectionSongs=true"><i class="fas fa-music"></i></button>
+    </div>
+    <div class="vorgang-parent-parent">
+      <div class="vorgang-parent">               
+        <div class="vorgang" v-for="(vorgang, index) in alarm.vorgangs" :key="vorgang.id" :class="{'vorgang-active':vorgang.active}" @click="vorgangIndex=index; activeVorgang()">
+          {{vorgang.name}}
+          <br> {{vorgang.duration}} min.
+        </div> 
+      </div>                
     </div>
     <div>
       <button @click="saveLocal"><i class="fas fa-save"></i></button>
@@ -85,18 +94,21 @@
 
         <div class="songs-selection" v-if="selectionSongs">
           <div class="songs-available">
-            <div v-for="(song) in songs" :key="song.path">
+            <div class="song-available" v-for="(song) in songs" :key="song.path">
               <button @click="alarm.vorgangs[vorgangIndex].songs.push(song.path)"><i class="fas fa-angle-double-right"></i></button>
               <span>{{song.name}}</span>
+              <audio :src="'./audio/'+song.path" controls></audio>
             </div>
           </div>
           <div class="songs-selected">
-            <div v-for="(song, index) in alarm.vorgangs[vorgangIndex].songs">
-              <button @click="changePosition(alarm.vorgangs[vorgangIndex].songs, index, index-1)"><i class="fas fa-caret-up"></i></button>
-              <button @click="changePosition(alarm.vorgangs[vorgangIndex].songs, index, index+1)"><i class="fas fa-caret-down"></i></button>
-              <span>{{song | songName}}</span>
-              <button @click="alarm.vorgangs[vorgangIndex].songs.splice(index, 1)"><i class="fas fa-minus"></i></button>
-            </div>
+            <transition-group name="re-order" tag="span">
+              <div class="song-selected re-order-item" v-for="(song, index) in alarm.vorgangs[vorgangIndex].songs" :key="index">
+                <button @click="changePosition(alarm.vorgangs[vorgangIndex].songs, index, index-1)"><i class="fas fa-caret-up"></i></button>
+                <button @click="changePosition(alarm.vorgangs[vorgangIndex].songs, index, index+1)"><i class="fas fa-caret-down"></i></button>
+                <span>{{song | songName}}</span>
+                <button @click="alarm.vorgangs[vorgangIndex].songs.splice(index, 1)"><i class="fas fa-minus"></i></button>
+              </div>
+            </transition-group>
           </div>
         </div>
       </div>
@@ -193,16 +205,38 @@ export default {
       } else {
         this.vorgangIndex += add
       }
+      this.activeVorgang()
     },
     addVorgang(){
       let newV = newVorgang.vorgang
       this.alarm.vorgangs.splice(this.vorgangIndex, 0, {
-        "name": "new",
-        "duration": 0,
+        "id":"id",
+        "name": "New",
+        "duration": 1,
         "songs": [],
         "image": "",
         "active": false
       })
+      this.alarm.vorgangs[this.vorgangIndex].id = this.makeUniqueID()
+      this.activeVorgang()
+    },
+    removeVorgang(){
+      if(this.vorgangIndex + 1 == this.alarm.vorgangs.length){
+        this.vorgangIndex--
+        this.alarm.vorgangs.splice(this.vorgangIndex + 1,1)
+      } else {
+        this.alarm.vorgangs.splice(this.vorgangIndex,1)
+      }
+      this.activeVorgang()
+    },
+    activeVorgang(set){
+      if(set==undefined){set=true}
+      for (let i = 0; i < this.alarm.vorgangs.length; i++){
+        this.alarm.vorgangs[i].active = false
+      }
+      if(set){
+        this.alarm.vorgangs[this.vorgangIndex].active = true
+      }
     },
     changePosition(array, from, to, next){
       if(next==undefined){
@@ -222,6 +256,10 @@ export default {
         }
       }
     },
+    playPreview(event){
+      console.log(event.target.previousElementSibling)
+      event.target.previousElementSibling.play()
+    },
     saveLocal(){
       localStorage.setItem('bw-alarm', JSON.stringify(this.alarm))
       // this.$store.commit('userData', this.alarm)
@@ -235,16 +273,30 @@ export default {
           user.data.alarms[i] = this.alarm
           // console.log(user.data.alarms[i])
           localStorage.setItem('bw-user', JSON.stringify(user))
+          console.log(this.$store.getters.user)
+          this.$store.commit('user', user)
+          console.log(this.$store.getters.user)
           return
         }
       }
+    },
+    makeUniqueID(){
+      let text = "";
+      let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+      for (let i = 0; i < 8; i++){
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+      return text + new Date().getTime().toString(36);
     }
   },
   created(){
     this.alarm = JSON.parse(localStorage.getItem('bw-alarm'))
     this.setWeekdays()
+    this.activeVorgang()
   },
   beforeRouteLeave (to, from, next) {
+    this.activeVorgang(false)
     this.saveLocal()
     next()
   },
@@ -346,6 +398,39 @@ export default {
   .songs-available, .songs-selected{
     width: 50%;
   }
+  .song-available, .song-selected{
+    display: flex;
+    align-items: center;
+    margin: 10px 0px;
+  }
+  .song-available span, .song-selected span{
+    margin: 0px 10px;
+  }
+  .re-order-move{
+    transition: all .5s;
+  }
+  .re-order-item{
+    transition: all 1s;
+    display: block;
+  }
+  .re-order-enter-active{
+    transition: all 0.5s;
+  }
+  .re-order-leave-active {
+    transition: all 0.5s;
+  }  
+  .re-order-enter{
+    opacity: 0;
+    transform: translateX(-60px)
+  } 
+  .re-order-leave-to {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+  .re-order-leave-active {
+    position: absolute;
+  }    
+  
   .image-selection{
     display: flex;
     flex-wrap: wrap;
@@ -359,4 +444,35 @@ export default {
     max-height: 300px;
     max-width: 300px;
   }
+
+  .vorgang-parent-parent{
+    position: relative;
+    width: 80%;
+    bottom: 0;
+  }
+  .wecker-name{
+    padding: 11px 22px 
+  }
+  .vorgang-parent{
+    display: flex;
+    align-items: stretch;
+  }
+  .vorgang{
+    color: #919191;
+    background: #3d3d3d;
+    margin: 2px;
+    flex-grow: 1;
+    text-align: center;
+    padding: 16px 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1.2
+  }
+  .vorgang-active{
+    color:#ececec;
+    background-color: #ff9306;
+    box-shadow: 1px 1px 2px white, 0 0 25px #fdd551, 0 0 5px #ffb100;
+  }
+
 </style>

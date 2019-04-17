@@ -2,8 +2,15 @@
   <div class="home">
     <div class="row justify-content-md-center">
       <div class="col-md-6 col-lg-4">
+        <div>Wecker Liste <i class="fas fa-plus" style="float: unset;" @click="newAlarm"></i></div>
         <ul class="list-group">
-          <li class="list-group-item" v-for="(alarm, index) in $store.getters.user.data.alarms"> {{alarm.name}} - {{alarm.repetition.time.hours | time}}:{{alarm.repetition.time.minutes | time}} Uhr<i class="fas fa-cog" @click="settings(alarm.id, index)"></i><i class="fas fa-play" @click="player(alarm.id, index)"></i> </li>
+          <li class="list-group-item" v-for="(alarm, index) in $store.getters.user.data.alarms" :key="alarm.id">
+            {{alarm.name}} - {{alarm.repetition.time.hours | time}}:{{alarm.repetition.time.minutes | time}} Uhr
+            <i class="fas fa-cog" @click="settings(alarm.id, index)"></i>
+            <i class="fas fa-play" @click="player(alarm.id, index)"></i> 
+            <i class="fas fa-copy" @click="duplicateAlarm(index)"></i>
+            <i class="fas fa-trash-alt" @click="removeAlarm(index)"></i>
+          </li>
         </ul>
         <br>
         <!-- <div>Nächster Wecker in: {{nextAlarmVar[0].alarmDate - today | DateToTime}} - {{user.data.alarms[nextAlarmVar[0].index].name}}</div> -->
@@ -33,6 +40,52 @@ export default {
     }
   },
   methods:{
+    newAlarm(){
+      let user = this.$store.getters.user
+      user.data.alarms.push({
+        "active": true,
+        "id": "id",
+        "name": "new Alarm",
+        "repetition":{
+          "date":"",
+          "state":true,
+          "time":{
+            "hours":8,
+            "minutes":0
+          },
+          "weekdays": [1,2,3,4,5],
+        },
+        "vorgangs":[{
+          "active":false,
+          "duration": 0,
+          "image": "",
+          "name": "New",
+          "songs":[]
+        }]
+      })
+      user.data.alarms[user.data.alarms.length-1].id = this.makeUniqueID()
+      this.updateLocal()
+      this.nextAlarm()
+    },
+    removeAlarm(index){
+      let user = this.$store.getters.user
+      if(user.data.alarms.length == 1){
+        this.newAlarm()
+      }
+      this.nextAlarmVar= []
+      user.data.alarms.splice(index,1)
+      this.updateLocal()
+      this.nextAlarm()
+    },
+    duplicateAlarm(index){
+      let user = this.$store.getters.user
+      let alarmString = JSON.stringify(user.data.alarms[index])
+      let alarm = JSON.parse(alarmString)
+      alarm.id = this.makeUniqueID()
+      user.data.alarms.splice(index, 0, alarm)
+      this.updateLocal()
+      this.nextAlarm()
+    },
     settings(alarmId, index){
       localStorage.setItem('bw-alarm', JSON.stringify(this.$store.getters.user.data.alarms[index]))
       // localStorage.setItem('bw-alarm', JSON.stringify(this.user.data.alarms[index]))
@@ -81,7 +134,8 @@ export default {
     },
     startCountDown(){
       if(this.nextAlarmVar != []){
-        console.log(this.nextAlarmVar[0].alarmDate - this.today)
+        console.log(this.nextAlarmVar[0].alarmDate - this.today)        
+        clearTimeout(this.countDownTimeout)
         this.countDownTimeout = setTimeout(()=>{this.player(this.nextAlarmVar[0].alarmId,this.nextAlarmVar[0].index)},this.nextAlarmVar[0].alarmDate - this.today)
       }      
     },
@@ -99,7 +153,7 @@ export default {
       // this.$store.state.user.data = defaultJSON
       // this.$store.state.user.guest = true
 
-      this.$store.commit('userId', this.makeUniqueID)
+      this.$store.commit('userId', this.makeUniqueID())
       this.$store.commit('userName', 'guest')
       this.$store.commit('userData', defaultJSON)
       this.$store.commit('userGuest', true)
@@ -117,6 +171,15 @@ export default {
         this.setDefaultUser()
         this.updateLocal()
       }      
+    },
+    makeUniqueID(){
+      let text = "";
+      let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+      for (let i = 0; i < 8; i++){
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+      return text + new Date().getTime().toString(36);
     }
   },
   beforeRouteEnter(to, from, next){
@@ -154,17 +217,6 @@ export default {
         value = "0" + value
       }
       return value
-    }
-  },
-  computed:{
-    makeUniqueID(){
-      let text = "";
-      let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-      for (let i = 0; i < 8; i++)
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-      return text + new Date().getTime().toString(36);
     }
   }
 }

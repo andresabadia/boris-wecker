@@ -14,6 +14,7 @@
             },
             "vorgangs":[
                 {
+                    "id":"1",
                     "name": "Schlummern",
                     "duration": 8,
                     "songs": [],
@@ -21,6 +22,7 @@
                     "active": false
                 },
                 {
+                    "id":"2",
                     "name": "Aufstehen",
                     "duration": 3,
                     "songs":[ 
@@ -49,6 +51,7 @@
             },
             "vorgangs":[
                 {
+                    "id":"2",
                     "name": "Zähne Putzen",
                     "duration": 3,
                     "songs": [],
@@ -56,6 +59,7 @@
                     "active": false
                 },
                 {
+                    "id":"1",
                     "name": "Gute Nacht",
                     "duration": 5,
                     "songs":[ 
@@ -68,6 +72,7 @@
                     "active": false
                 },
                 {
+                    "id":"3",
                     "name": "Uno nuevo",
                     "duration": 3,
                     "songs":[ 

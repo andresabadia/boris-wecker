@@ -15,15 +15,6 @@ export default new Vuex.Store({
   getters: {
     user: state => {
       return state.user
-    },
-    uniqueID: () =>{
-      let text = ""
-      let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-
-      for (let i = 0; i < 8; i++){
-        text += possible.charAt(Math.floor(Math.random() * possible.length))
-      }
-      return text + new Date().getTime().toString(36)
     }
   },
   mutations: {

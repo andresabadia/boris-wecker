@@ -1,22 +1,44 @@
-{"images":[ 
-    {
-        "path": "img_01.gif",
-        "name": "Image 1",
-        "tags": ""
-    },
-    {
-        "path": "img_02.gif",
-        "name": "Image 2",
-        "tags": ""
-    },
-    {
-        "path": "img_03.gif",
-        "name": "Image 3",
-        "tags": ""
-    },
-    {
-        "path": "img_04.gif",
-        "name": "Image 4",
-        "tags": ""
-    }
-]}
+{
+    "images": [
+      {
+        "path": "anziehen.gif",
+        "name": "Anziehen",
+        "tags": "anziehen, unterwäsche, fertig,machen "
+      },
+      {
+        "path": "aufstehen.gif",
+        "name": "Aufstehen",
+        "tags": "aufstehen,aufkommen,sich aufraffen,sich erheben,sich heben,sich aufrappel,hochkommen,sich hochrappel,sich aufheben"
+      },
+      {
+        "path": "duschen.gif",
+        "name": "Duschen",
+        "tags": "duschen, baden, sauber, machen"
+      },
+      {
+        "path": "fruehstuecken.gif",
+        "name": "Frühstücken",
+        "tags": "frühstücken, kaffee trinken,wasser, trinken,kuchen essen"
+      },
+      {
+        "path": "styling.gif",
+        "name": "Styling",
+        "tags": "haare,kammen,fertig machen"
+      },
+      {
+        "path": "haendewaschen.gif",
+        "name": "Hände waschen",
+        "tags": "hände, waschen, sauber, machen,hand"
+      },
+      {
+        "path": "schuheanziehen.gif",
+        "name": "Schuhe anziehen",
+        "tags": "schuhe,anziehen"
+      },
+      {
+        "path": "zaehneputzen.gif",
+        "name": "Zähne putzen",
+        "tags": "zähne, putzen,sauber, machen"
+      }
+    ]
+  }

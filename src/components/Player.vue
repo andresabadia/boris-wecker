@@ -10,10 +10,11 @@
     
     <div class="boris-player-modal">
         <div class="boris-player-window">
-            <div class="boris-player-window-close" @click="close">
-                <button class="btn btn-primary" @click="restart">Restart</button>
+            <div class="boris-player-window-close" @click="close">X
+                <!-- <button class="btn btn-primary" @click="restart">Restart</button>
                 <button class="btn btn-primary" @click="nextVorgang">nächste Vorgang</button>
-                <button class="btn btn-primary" @click="close">Close</button></div>
+                <button class="btn btn-primary" @click="close">Close</button> -->
+            </div>
             <div class="vorgang-inhalt-parent">
                 <div class="vorgang-inhalt">
                     <h1> {{vorgang}} </h1>
@@ -192,7 +193,7 @@ export default {
             console.log("weckerTimer: set weckerTimeout " + this.durationSum)
         },
         close(){   
-            // this.clearBeforeLeave()         
+            // this.clearBeforeLeave()      
             this.$router.go('-1')
         },
         clearBeforeLeave(){
@@ -221,13 +222,13 @@ export default {
         songs(){ return this.vorgangs[this.currentVorgang].songs },
         vorgang(){ return this.vorgangs[this.currentVorgang].name },
         duration(){ return this.vorgangs[this.currentVorgang].duration},
-        durationMilli(){ return this.vorgangs[this.currentVorgang].duration*1*1000},
+        durationMilli(){ return this.vorgangs[this.currentVorgang].duration*60*1000},
         durationSum(){
             let sum = 0
             for(let i=0; i<this.vorgangs.length; i++){
                 sum += this.vorgangs[i].duration
             }
-            return sum*1*1000
+            return sum*60*1000
         }
     }
 }

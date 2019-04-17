@@ -45,5 +45,6 @@ export default {
     bottom: 0;
     right: 0;
     margin: 20px 50px;
+    text-shadow: 0px 0px 30px white;
 }
 </style>
